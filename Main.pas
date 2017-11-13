@@ -1,0 +1,379 @@
+unit Main;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls,ClipBrd,StrUtils  ;
+
+type
+  TForm1 = class(TForm)
+    Memo1: TMemo;
+    Memo2: TMemo;
+    Memo3: TMemo;
+    Memo4: TMemo;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Button1: TButton;
+    Button2: TButton;
+    Button3: TButton;
+    Memo5: TMemo;
+    Edit1: TEdit;
+    Edit2: TEdit;
+    Edit3: TEdit;
+    Edit4: TEdit;
+    Edit5: TEdit;
+    Memo6: TMemo;
+    Memo7: TMemo;
+    Label5: TLabel;
+    Label6: TLabel;
+    Memo8: TMemo;
+    procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm1.Button1Click(Sender: TObject);
+var
+  Tparam1 : TstringList;
+  Tparam2 : TstringList;
+  i,j,k,l : integer;
+  m : integer;
+  iCnt,iCnt2 : integer;
+  iStr,iEnd : integer;
+  iCommacnt : integer;
+  iAnnPos : integer;
+  sTmp,sTmp2 : string;
+
+  bAnn : Boolean;
+
+  iMemoCnt: integer;
+  iCommentcnt : integer;
+//  arr_sql : array [1 .. 20000]of string;
+begin
+  // 1. param 분리하여 각각의 list에 넣기
+  Tparam1 := Tstringlist.Create;
+  Tparam2 := Tstringlist.Create;
+
+  bAnn := False;
+
+  // 기존 메모 클리어
+  memo4.Lines.Clear;
+  memo5.Lines.Clear;
+  memo6.Lines.Clear;
+  memo7.Lines.Clear;
+  memo8.Lines.Clear;
+
+
+
+
+//  sTmp :=   Memo1.Lines.Text;
+//  iCnt2 := Length(sTmp)- length(StringReplace( sTmp,#13,'',[rfReplaceAll]));
+//  sTmp := StringReplace( sTmp,#13#10,'',[rfReplaceAll]);
+//
+//
+//  iCnt2 := Length(sTmp)- length(StringReplace( sTmp,#13,'',[rfReplaceAll]));
+//
+//
+//  iCnt := Length(sTmp)- length(StringReplace( sTmp,#10,'',[rfReplaceAll]));
+//
+//  Memo1.Clear;
+//  for i := 0  to iCnt -1 do
+//  begin
+//
+//    sTmp2 := Copy(sTmp,1,Pos(#10, sTmp)-1);
+//    if RightStr(sTmp2,1) = #13 then
+//    begin
+//      sTmp2 := Copy(sTmp2,1,Length(sTmp2)-1)
+//    end;
+//
+//    Memo1.Lines.Add(sTmp2);
+//    Delete(sTmp,1,POS(#10,sTmp));
+//  end;
+
+
+
+  l := 0;
+  sTmp := '';
+  sTmp :=   Memo2.Lines.Text;
+  sTmp := StringReplace( sTmp,#13#10,'',[rfReplaceAll]);
+  iCommacnt := Length(sTmp)- length(StringReplace( sTmp,',','',[rfReplaceAll]));
+
+
+  for i := 0  to iCommacnt-1 do
+  begin
+    Tparam1.Add(Copy(sTmp,1,Pos(',', sTmp)-1));
+    Memo5.Lines.Add(Copy(sTmp,1,Pos(',', sTmp)-1));
+    Delete(sTmp,1,POS(',',sTmp));
+  end;
+
+  Tparam1.Add(sTmp);
+
+  Edit1.Text :=   IntToStr(iCommacnt);
+  Edit2.Text :=   IntToStr(Tparam1.Count);
+
+
+  sTmp := '';
+  sTmp :=   Memo3.Lines.Text;
+  sTmp := StringReplace( sTmp,#13#10,'',[rfReplaceAll]);
+  iCommacnt := Length(sTmp)- length(StringReplace( sTmp,',','',[rfReplaceAll]));
+
+  for i := 0  to iCommacnt-1 do
+  begin
+
+    Tparam2.Add(Copy(sTmp,1,Pos(',', sTmp)-1));
+    Memo8.Lines.Add(Copy(sTmp,1,Pos(',', sTmp)-1));
+    Delete(sTmp,1,POS(',',sTmp));
+
+  end;
+  Tparam2.Add(sTmp);
+
+  Edit3.Text :=  IntToStr(iCommacnt);
+  Edit4.Text :=   IntToStr(Tparam2.count);
+
+
+
+  // 2. SQL을 읽어서 바인드 변수를 찾아 매칭이 되면 해당하는 변수를 삽입
+  sTmp := Memo1.Lines.Text;
+
+  iMemoCnt := Memo1.Lines.Count;
+
+  Memo4.clear;
+
+  try
+    m := 0;
+    for i := 0 to iMemoCnt-1 do
+    begin
+      sTmp := Memo1.Lines.Strings[i];
+      EDIT5.TEXT := IntToStr(i);
+
+      // 1. 리스트를 읽어서 첫번째 문자가 숫자이면 숫자처리 문자이면 문자처리
+      // 2. #, $가 있으면 각각의 위치를
+
+
+      // /* */ 주석찾기
+      if Pos('SELECT SUBSTR(XMLAGG(XMLELEMENT(WEL_MBD_ID',sTmp) > 0 then
+       bAnn := bAnn;
+//      if Pos('*/',sTmp) > 0 then bAnn := false;
+
+//      iAnnPos := pos('/*',sTmp);
+
+      if bAnn = False then  iAnnPos := pos('--',sTmp);
+
+      if iAnnPos = 0 then
+      begin
+        iAnnPos := Length(sTmp);
+      end;
+      if (pos('#',sTmp) > 0 ) or (pos('$',sTmp) > 0 ) then
+      begin
+        iCommacnt := Length(sTmp)- length(StringReplace( sTmp,'#','',[rfReplaceAll]));
+        iCommacnt := iCommacnt + Length(sTmp)- length(StringReplace( sTmp,'$','',[rfReplaceAll]));
+
+        for j := 0 to iCommacnt-1 do
+        begin
+  
+          if bAnn = False then  iAnnPos := pos('--',sTmp);
+
+          if iAnnPos = 0 then
+          begin
+            iAnnPos := Length(sTmp);
+          end;
+
+
+          if    Tparam1.Count > 0 then
+          begin
+
+//            Memo5.Lines.Add('j '+intToStr(j));
+//            Memo5.Lines.Add('Var_cnt : '+intToStr(Tparam1.count));
+//            Memo5.Lines.Add('Var : '+Tparam1.Strings[0]);
+
+//            if (Tparam1.count = 7) then
+//            begin
+//              Memo5.Lines.Add('Var : '+Tparam1.Strings[0]);
+//            end;
+
+            k := POS('#',sTmp);
+            l := POS('$',sTmp);
+            if (k = 0) and (l > 0) then
+            begin
+              if iAnnPos >= l then
+              begin
+                system.Delete(sTmp,l,1);
+                system.Insert(Tparam1.Strings[0],sTmp,l);
+                Tparam1.Delete(0);
+              end;
+
+            end
+            else if (k = 0) and (l = 0) then
+            begin
+
+            end
+            else if (k > 0) and (l = 0) then
+            begin
+              if iAnnPos >= k then
+              begin
+                system.Delete(sTmp,k,1);
+                system.Insert(Tparam1.Strings[0],sTmp,k);
+                Tparam1.Delete(0);
+              end;
+            end
+            else if (k < l) then
+            begin
+              if iAnnPos >= k then
+              begin
+                system.Delete(sTmp,k,1);
+                system.Insert(Tparam1.Strings[0],sTmp,k);
+                Tparam1.Delete(0);
+              end;
+            end
+            else if (l < k) then
+            begin
+              if iAnnPos >= l then
+              begin
+                system.Delete(sTmp,l,1);
+                system.Insert(Tparam1.Strings[0],sTmp,l);
+                Tparam1.Delete(0);
+              end;
+            end;
+
+
+            
+          end;
+
+
+  
+        end;
+  
+      end;
+
+
+      // ? 이 있으면 for
+      if pos('AND NVL(B.SEX_CODE,',sTmp) > 0 then
+      begin
+         bAnn := bAnn;
+      end;
+
+
+      if (length(Memo3.Text)>0) and (pos('?',sTmp) > 0 ) then
+      begin
+        iCommacnt := Length(sTmp)- length(StringReplace( sTmp,'?','',[rfReplaceAll]));
+
+
+        for j := 0 to iCommacnt-1 do
+        begin
+//          Memo5.Lines.Add('j '+intToStr(j));
+//          Memo5.Lines.Add('Var2_cnt : '+intToStr(Tparam2.count));
+//          Memo5.Lines.Add('Var2 : '+Tparam2.Strings[0]);
+
+
+          if bAnn = False then  iAnnPos := pos('--',sTmp);
+
+          if iAnnPos = 0 then
+          begin
+            iAnnPos := Length(sTmp);
+          end;
+
+          k := POS('?',sTmp);
+          if iAnnPos >= k then
+          begin
+            system.Delete(sTmp,k,1);
+
+            system.Insert(':b'+intToStr(m+1),sTmp,k);
+            Inc(m);
+//            system.Insert(Tparam2.Strings[0],sTmp,k);
+
+            Memo6.Lines.Add(Tparam2.Strings[0]);
+            Memo7.Lines.Add(StringReplace( Tparam2.Strings[0],'''','',[rfReplaceAll]));
+
+            Tparam2.Delete(0);
+          end;
+
+        end;
+
+      end;
+
+      Memo4.Lines.Add(sTmp);
+
+
+    end;
+  except 
+    begin
+//      memo5.clear;
+//      Memo5.Lines.Add(IntToStr(i));
+//      Memo5.Lines.Add(Memo1.Lines.Strings[i]);
+//      Memo5.Lines.Add(sTmp);
+
+      exit;
+    end;
+  end;
+
+  ClipBoard.AsText := memo4.Text;
+end;
+
+procedure TForm1.Button2Click(Sender: TObject);
+begin
+  Memo1.Lines.Clear;
+  memo2.Lines.Clear;
+  memo3.Lines.Clear;
+  memo4.Lines.Clear;
+  memo5.Lines.Clear;
+  memo6.Lines.Clear;
+  memo7.Lines.Clear;
+  memo8.Lines.Clear;  
+
+end;
+
+procedure TForm1.Button3Click(Sender: TObject);
+begin
+  ClipBoard.AsText := memo4.Text;
+
+end;
+
+procedure TForm1.FormShow(Sender: TObject);
+begin
+//  Button2Click(Sender);
+end;
+
+function  isNum( sTmp:string ):Boolean;
+var
+  sStr : string;
+  i : integer;
+
+begin
+
+
+  isNum:= false;
+  sSTR := '1234567890';
+
+  for i := 0  to 9 do
+  begin
+    if sSTR[i] = sTmp then
+    begin
+
+      isNum := true;
+
+    end
+  end;
+
+
+
+
+end;
+
+
+
+end.
